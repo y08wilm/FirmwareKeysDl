@@ -1,0 +1,12 @@
+*.class
+.classpath
+.project
+.settings
+.metadata
+bin
+target
+web_resources
+cpanel.properties
+config.db
+web_resources2
+src/main/resources/.env
