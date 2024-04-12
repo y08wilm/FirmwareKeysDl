@@ -184,7 +184,6 @@ public class TheAppleWikiHTTPClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(keys.exportAsJson());
 		return keys;
 	}
 

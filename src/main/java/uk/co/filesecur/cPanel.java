@@ -107,6 +107,7 @@ public class cPanel {
 					version, model);
 			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
 			FirmwareKeys keys = httpClient.getAllFirmwareKeys();
+			System.out.println(keys.exportAsJson());
 		} else if (command.equals("--b") || command.equals("-b")
 				|| command.equals("--buildid") || command.equals("-buildid")) {
 			// TODO: GENERATE GAY TOKEN
@@ -136,6 +137,12 @@ public class cPanel {
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
 			Optional<String> buildId = httpClient.getBuildIdForVersion(version);
+			try {
+				httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+				FirmwareKeys keys = httpClient.getAllFirmwareKeys();
+			} catch (Exception e) {
+				buildId = Optional.empty();
+			}
 			if (buildId.isPresent()) {
 				System.out.println("true");
 			} else {
