@@ -1,5 +1,7 @@
 package uk.co.filesecur;
 
+import java.util.Optional;
+
 public class cPanel {
 
 	public static void printf(String str) {
@@ -18,13 +20,17 @@ public class cPanel {
 		printf("  FirmwareKeysDl -ivkey iBEC.n51ap.RELEASE.im4p 7.0.6 iPhone6,1");
 		printf("  FirmwareKeysDl -ivkey DeviceTree.n51ap.im4p 7.0.6 iPhone6,1");
 		printf("  FirmwareKeysDl -l 7.0.6 iPhone6,1");
+		printf("  FirmwareKeysDl -b 7.0.6 iPhone6,1");
+		printf("  FirmwareKeysDl -e 14.3 iPhone6,1");
 		printf("");
 		printf("Main operation mode:");
-		printf("  -ivkey, --ivkey         gets the iv+key for the given file");
-		printf("  -iv, --iv               gets only the iv for the given file");
-		printf("  -key, --key             gets only the key for the given file");
-		printf("  -l, --l, -list, --list  gets all the keys for a given version");
-		printf("  -help, --help, ?        shows this help listing");
+		printf("  -ivkey, --ivkey               gets the iv+key for the given file");
+		printf("  -iv, --iv                     gets only the iv for the given file");
+		printf("  -key, --key                   gets only the key for the given file");
+		printf("  -l, --l, -list, --list        gets all the keys for a given version");
+		printf("  -b, --b, -buildid, --buildid  gets the build id for a given version");
+		printf("  -e, --e, -exists, --exists    checks if the version exists for this device");
+		printf("  -help, --help, ?              shows this help listing");
 	}
 
 	public static void main(String[] arg0) {
@@ -101,6 +107,40 @@ public class cPanel {
 					version, model);
 			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
 			FirmwareKeys keys = httpClient.getAllFirmwareKeys();
+		} else if (command.equals("--b") || command.equals("-b")
+				|| command.equals("--buildid") || command.equals("-buildid")) {
+			// TODO: GENERATE GAY TOKEN
+			if (args.length != 2) {
+				printf("FirmwareKeysDl -b [VERSION]... [MODEL]...");
+				return;
+			}
+			String version = args[0];
+			String model = args[1];
+			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
+					version, model);
+			Optional<String> buildId = httpClient.getBuildIdForVersion(version);
+			if (buildId.isPresent()) {
+				System.out.println(buildId.get());
+			} else {
+				System.out.println("build id does not exist");
+			}
+		} else if (command.equals("--e") || command.equals("-e")
+				|| command.equals("--exists") || command.equals("-exists")) {
+			// TODO: GENERATE GAY TOKEN
+			if (args.length != 2) {
+				printf("FirmwareKeysDl -e [VERSION]... [MODEL]...");
+				return;
+			}
+			String version = args[0];
+			String model = args[1];
+			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
+					version, model);
+			Optional<String> buildId = httpClient.getBuildIdForVersion(version);
+			if (buildId.isPresent()) {
+				System.out.println("true");
+			} else {
+				System.out.println("false");
+			}
 		} else {
 			helpCmd();
 		}
