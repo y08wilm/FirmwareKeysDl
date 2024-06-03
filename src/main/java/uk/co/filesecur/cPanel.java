@@ -20,6 +20,7 @@ public class cPanel {
 		printf("  FirmwareKeysDl -ivkey iBEC.n51ap.RELEASE.im4p 7.0.6 iPhone6,1");
 		printf("  FirmwareKeysDl -ivkey DeviceTree.n51ap.im4p 7.0.6 iPhone6,1");
 		printf("  FirmwareKeysDl -l 7.0.6 iPhone6,1");
+		printf("  FirmwareKeysDl -l 11D257 iPhone6,1");
 		printf("  FirmwareKeysDl -b 7.0.6 iPhone6,1");
 		printf("  FirmwareKeysDl -e 14.3 iPhone6,1");
 		printf("");
@@ -59,7 +60,12 @@ public class cPanel {
 			String model = args[2];
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
-			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+			if (version.contains(".")) {
+				httpClient.setBuildId(httpClient.getBuildIdForVersion(version)
+						.get());
+			} else {
+				httpClient.setBuildId(version);
+			}
 			String ivkey = httpClient.getFirmwareKey(fn).get();
 			printf(ivkey);
 		} else if (command.equals("--iv") || command.equals("-iv")) {
@@ -73,12 +79,17 @@ public class cPanel {
 			String model = args[2];
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
-			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+			if (version.contains(".")) {
+				httpClient.setBuildId(httpClient.getBuildIdForVersion(version)
+						.get());
+			} else {
+				httpClient.setBuildId(version);
+			}
 			String ivkey = httpClient.getFirmwareKey(fn).get();
 			String iv = ivkey.substring(0, 32);
 			String key = ivkey.substring(32);
 			printf(iv);
-		} else if (command.equals("--iv") || command.equals("-iv")) {
+		} else if (command.equals("--key") || command.equals("-key")) {
 			// TODO: GENERATE GAY TOKEN
 			if (args.length != 3) {
 				printf("FirmwareKeysDl -ivkey [FILE]... [VERSION]... [MODEL]...");
@@ -89,7 +100,12 @@ public class cPanel {
 			String model = args[2];
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
-			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+			if (version.contains(".")) {
+				httpClient.setBuildId(httpClient.getBuildIdForVersion(version)
+						.get());
+			} else {
+				httpClient.setBuildId(version);
+			}
 			String ivkey = httpClient.getFirmwareKey(fn).get();
 			String iv = ivkey.substring(0, 32);
 			String key = ivkey.substring(32);
@@ -105,7 +121,12 @@ public class cPanel {
 			String model = args[1];
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
-			httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+			if (version.contains(".")) {
+				httpClient.setBuildId(httpClient.getBuildIdForVersion(version)
+						.get());
+			} else {
+				httpClient.setBuildId(version);
+			}
 			FirmwareKeys keys = httpClient.getAllFirmwareKeys();
 			System.out.println(keys.exportAsJson());
 		} else if (command.equals("--b") || command.equals("-b")
@@ -136,9 +157,17 @@ public class cPanel {
 			String model = args[1];
 			TheAppleWikiHTTPClient httpClient = new TheAppleWikiHTTPClient(
 					version, model);
-			Optional<String> buildId = httpClient.getBuildIdForVersion(version);
+			Optional<String> buildId = Optional.empty();
+			if (version.contains(".")) {
+				buildId = httpClient.getBuildIdForVersion(version);
+			} else {
+				buildId = Optional.of(version);
+			}
+			if (!buildId.isPresent()) {
+				System.out.println("false");
+			}
 			try {
-				httpClient.setBuildId(httpClient.getBuildIdForVersion(version).get());
+				httpClient.setBuildId(buildId.get());
 				FirmwareKeys keys = httpClient.getAllFirmwareKeys();
 			} catch (Exception e) {
 				buildId = Optional.empty();
