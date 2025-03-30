@@ -79,13 +79,13 @@ public class TheAppleWikiHTTPClient {
 		}
 		return sb;
 	}
-	
+
 	public Optional<String> getBuildIdForVersion(String ver) {
 		// https://api.ipsw.me/v4/device/iPhone6,1
 		try {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
-			HttpGet request = new HttpGet(
-					"https://api.ipsw.me/v4/device/" + model);
+			HttpGet request = new HttpGet("https://api.ipsw.me/v4/device/"
+					+ model);
 			this.addRequestHeaders(request);
 			String response = consume(httpClient.execute(request), false)
 					.toString();
@@ -97,7 +97,8 @@ public class TheAppleWikiHTTPClient {
 					continue;
 				}
 				String version = split.substring(0, split.indexOf("\""));
-				String buildid = split.substring(split.indexOf("\"buildid\":\"") + "\"buildid\":\"".length());
+				String buildid = split.substring(split
+						.indexOf("\"buildid\":\"") + "\"buildid\":\"".length());
 				buildid = buildid.substring(0, buildid.indexOf("\""));
 				if (version.equals(ver)) {
 					return Optional.of(buildid);
@@ -115,7 +116,7 @@ public class TheAppleWikiHTTPClient {
 		try {
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet request = new HttpGet(
-					"https://theapplewiki.com/index.php?search="
+					"https://theiphonewiki.com/w/index.php?search="
 							+ buildid
 							+ "+"
 							+ URLEncoder.encode(model,
@@ -125,17 +126,17 @@ public class TheAppleWikiHTTPClient {
 			String response = consume(httpClient.execute(request), false)
 					.toString();
 			String token = response;
-			token = token.substring(token.indexOf("<a href=\"/wiki/Keys:")
-					+ "<a href=\"/wiki/Keys:".length());
+			token = token.substring(token.indexOf("<a href=\"/wiki/")
+					+ "<a href=\"/wiki/".length());
 			token = token.substring(0, token.indexOf("\""));
-			token = "https://theapplewiki.com/wiki/Keys:" + token;
+			token = "https://www.theiphonewiki.com/wiki/" + token;
 			return Optional.of(token);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Optional.empty();
 		}
 	}
-	
+
 	public FirmwareKeys getAllFirmwareKeys() {
 		// keypage-filename" id="keypage-
 		FirmwareKeys keys = new FirmwareKeys();
